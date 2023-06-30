@@ -37,7 +37,6 @@ function solveODEAtSBMLValues(pathSBML, solver, timeSpan; abstol=1e-8, reltol=1e
     verbose && @info "Building ODE system"
     modelName = splitdir(pathSBML)[2][1:end-4]
     modelName = replace(modelName, "-" => "_")
-    #println(modelName)
 
     dirSave = joinpath(splitdir(pathSBML)[1], "SBML")
     if !isdir(dirSave)
@@ -48,9 +47,6 @@ function solveODEAtSBMLValues(pathSBML, solver, timeSpan; abstol=1e-8, reltol=1e
 
     verbose && @info "Symbolically processing system"
     funAsString = PEtab.getFunctionsAsString(pathODE, 1)[1]
-    #println(funAsString)
-    #funAsString = replace(funAsString, Regex("ceiling\\((.*?)\\)")=>s"Int(ceil(\1).val)")
-    #println(funAsString)
     _getODESystem = @RuntimeGeneratedFunction(Meta.parse(funAsString))
     _odeSystem, stateMap, parameterMap = _getODESystem("https://xkcd.com/303/") # Argument needed by @RuntimeGeneratedFunction
     odeSystem = structural_simplify(_odeSystem)
@@ -88,7 +84,6 @@ function solveODEAtSBMLValues(pathSBML, solver, timeSpan; abstol=1e-8, reltol=1e
         else
             checkIfActivatedT0Names = ""
         end
-        #println(stringWriteTstops)
         #stringWriteTstops *= "\treturn" * PEtab.createFuncionForTstops(SBMLDict, modelStateNames, pODEProblemNames, θ_indices) * "\n" * "end" * "\n"
         stringWriteTstops *= "\treturn Float64[] \nend \n"
     end
@@ -128,8 +123,6 @@ fileList = CSV.File(joinpath(pwd(), "files.txt"))
             println(strippedFileName)
             println(io,index)
             println(io,strippedFileName)
-            #println(sol isa ODESolution)
-            #if index  ∉ badIndex
             sol = try solveODEAtSBMLValues(pathSBML, Rodas5P(), (0.0, 10.0))
             catch e
                 io = IOBuffer();
