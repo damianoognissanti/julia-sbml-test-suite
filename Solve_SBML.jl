@@ -119,17 +119,11 @@ function solveODEAtSBMLValues(pathSBML, solver, timeSpan; abstol=1e-8, reltol=1e
     return solve(odeProblem, solver, abstol=abstol, reltol=reltol, saveat=saveat, tstops=tStops, callback=cbSet)
 end
 
+fileList = CSV.File(joinpath(pwd(), "files.txt"))
 
-fileList = CSV.File("./cases/files.txt")
-
-#@testset "Julia import" begin
-    #badFiles = [
-    #    "/semantic/00048/00048-sbml-l2v1.xml"
-    #]
     for (index,file) in enumerate(fileList)
         pathSBML = file[1]
-        strippedFileName = replace(pathSBML, "./cases"=>"")
-        #if index > 370 && index < 372 && !maximum(strippedFileName .== badFiles)
+        strippedFileName = replace(pathSBML, "/cases"=>"")
             println(index)
             println(strippedFileName)
             println(io,index)
@@ -143,12 +137,8 @@ fileList = CSV.File("./cases/files.txt")
                 error_msg = String(take!(io))
                 @warn "Trouble doing things:\n$(error_msg)"
             end
-            #@test sol isa ODESolution
-            #end
-        #end
     end
 
-#end
 flush(io)
 close(io)
 
